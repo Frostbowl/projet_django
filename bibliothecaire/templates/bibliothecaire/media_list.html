@@ -1,15 +1,16 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Liste des médias</title>
 </head>
 <body>
     <h1>Liste des médias</h1>
     <ul>
         {% for media in medias %}
-        <li>{{ media.name }} || {{ media.disponible }}</li>
+        <li>{{ media.name }} - {{ media.get_media_type }} - {% if media.emprunteur %} (Emprunté par : {{ media.emprunteur }}){% endif %}</li>
+        {% endfor %}
     </ul>
+    <a href="{% url 'choix_media_type' %}">Ajouter un nouveau média</a> <br>
+    <a href="{% url 'emprunteur_list' %}">Retour à la liste des emprunteurs</a>
 </body>
 </html>
