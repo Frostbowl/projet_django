@@ -1,3 +1,7 @@
 from django.shortcuts import render
+from .models import Media
 
-# Create your views here.
+
+def media_list(request):
+    medias = Media.objects.all()
+    return render(request, 'bibliothecaire/media_list.html', {'medias': medias})
