@@ -1,3 +1,5 @@
+<!-- media_list.html -->
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -7,10 +9,20 @@
     <h1>Liste des médias</h1>
     <ul>
         {% for media in medias %}
-        <li>{{ media.name }} - {{ media.get_media_type }} - {% if media.emprunteur %} (Emprunté par : {{ media.emprunteur }}){% endif %}</li>
+        <li>
+            {{ media.name }} - {{ media.get_media_type_display }} - {% if media.emprunteur %}
+            (Emprunté par : {{ media.emprunteur }}){% endif %}
+            <!--{% if media.disponible %}
+                <form action="{% url 'emprunter_media' emprunteur_id=emprunteur_id media_id=media.id %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit">Emprunter</button>
+                </form>
+            {% endif %}-->
+        </li>
         {% endfor %}
     </ul>
     <a href="{% url 'choix_media_type' %}">Ajouter un nouveau média</a> <br>
     <a href="{% url 'emprunteur_list' %}">Retour à la liste des emprunteurs</a>
 </body>
 </html>
+

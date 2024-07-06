@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from .models import Media, Emprunteur
 from .forms import MediaTypeForm, LivreForm, CdForm, DvdForm, EmprunteurForm
 
@@ -53,3 +53,14 @@ def create_emprunteur(request):
 def emprunteur_list(request):
     emprunteurs = Emprunteur.objects.all()
     return render(request, 'bibliothecaire/emprunteur_list.html', {'emprunteurs': emprunteurs})
+
+
+def emprunter_media(request, emprunteur_id, media_id):
+    emprunteur = get_object_or_404(Emprunteur, pk=emprunteur_id)
+    media = get_object_or_404(Media, pk=media_id)
+
+    try:
+        emprunteur.emprunter_media(media)
+        return redirect('media_list')
+    except ValueError as e:
+        return render(request, 'bibliothecaire/emprunteur_error.html', {'error_message': str(e)})
