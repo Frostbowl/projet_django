@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Liste des emprunteurs</title>
+</head>
+<body>
+    <h1>Liste des emprunteurs</h1>
+    <ul>
+        {% for emprunteur in emprunteurs %}
+        <li>{{ emprunteur.nom }} {{ emprunteur.prenom }}{% if emprunteur.bloque %} (Bloqué){% endif %}</li>
+        {% endfor %}
+    </ul>
+    <a href="{% url 'create_emprunteur' %}">Créer un nouvel emprunteur</a> <br>
+    <a href="{% url 'media_list' %}">Retour à la liste des médias</a> <br>
+</body>
+</html>
