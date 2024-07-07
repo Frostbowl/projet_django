@@ -30,6 +30,9 @@ class Media(models.Model):
 
     def get_media_type(self):
         return self.__class__.__name__
+    
+    def __str__(self):
+        return f'{self.name} ({self.get_media_type()})'
 
 class Livre(Media):
     auteur = models.CharField(max_length=155)

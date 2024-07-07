@@ -36,7 +36,8 @@ def ajout_media(request, media_type):
 
 def media_list(request):
     medias = Media.objects.all()
-    return render(request, 'bibliothecaire/media_list.html', {'medias': medias})
+    emprunteurs = Emprunteur.objects.all()
+    return render(request, 'bibliothecaire/media_list.html', {'medias': medias, 'emprunteurs': emprunteurs})
 
 
 def create_emprunteur(request):
@@ -53,6 +54,19 @@ def create_emprunteur(request):
 def emprunteur_list(request):
     emprunteurs = Emprunteur.objects.all()
     return render(request, 'bibliothecaire/emprunteur_list.html', {'emprunteurs': emprunteurs})
+
+def media_emprunteur(request, emprunteur_id, media_id):
+    media = get_object_or_404(Media, id=media_id)
+    emprunteur = get_object_or_404(Emprunteur, id=emprunteur_id)
+    
+    if media.emprunteur is None:
+        if emprunteur.media_set.count() < 3:
+            media.emprunteur = emprunteur
+            media.save()
+
+        else:
+            pass
+    return redirect('media_list')
 
 
 def emprunter_media(request, emprunteur_id, media_id):
