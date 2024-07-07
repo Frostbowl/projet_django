@@ -1,4 +1,5 @@
 from django.db import models
+import datetime
 
 class Emprunteur(models.Model):
     nom = models.CharField(max_length=155)
@@ -28,6 +29,23 @@ class Media(models.Model):
     date_emprunt = models.DateField(null=True, blank=True)
     emprunteur = models.ForeignKey(Emprunteur, on_delete=models.SET_NULL, null=True, blank=True, related_name='media_emprunt')
 
+    def rendre(self):
+        if self.emprunteur:
+            self.disponible = True
+            self.emprunteur = None
+            self.date_emprunt = None
+            self.save()
+
+    def emprunter(self, emprunteur):
+        if not self.emprunteur:
+            if emprunteur.media_set_count() < 3:
+                self.emprunteur = emprunteur
+                self.disponible = False
+                self.date_emprunt = datetime.date.today()
+                self.save
+            else:
+                raise ValueError('Vous ne pouvez pas emprunter plus de 3 médias')
+
     def get_media_type(self):
         return self.__class__.__name__
     
@@ -43,3 +61,10 @@ class Cd(Media):
 class Dvd(Media):
     realisateur = models.CharField(max_length=155)
 
+class JeuDePlateau(models.Model):
+    nom = models.CharField(max_length=155)
+    fabricant = models.CharField(max_length=155)
+    description = models.CharField(max_length=155)
+
+    def __str__(self):
+        return self.nom

@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Media, Emprunteur
-from .forms import MediaTypeForm, LivreForm, CdForm, DvdForm, EmprunteurForm
+from .models import Media, Emprunteur, JeuDePlateau
+from .forms import MediaTypeForm, LivreForm, CdForm, DvdForm, EmprunteurForm, JeuDePlateauForm
 
 def choix_media_type(request):
     if request.method == 'POST':
@@ -44,12 +44,14 @@ def create_emprunteur(request):
     if request.method == 'POST':
         form = EmprunteurForm(request.POST)
         if form.is_valid():
-            form.save()
+            emprunteur = form.save()
             return redirect('emprunteur_list')
     
     else:
         form = EmprunteurForm()
-        return render (request, 'bibliothecaire/create_emprunteur.html', {'form': form})
+
+    return render (request, 'bibliothecaire/create_emprunteur.html', {'form': form})
+    
 
 def emprunteur_list(request):
     emprunteurs = Emprunteur.objects.all()
@@ -70,11 +72,51 @@ def media_emprunteur(request, emprunteur_id, media_id):
 
 
 def emprunter_media(request, emprunteur_id, media_id):
-    emprunteur = get_object_or_404(Emprunteur, pk=emprunteur_id)
-    media = get_object_or_404(Media, pk=media_id)
+    emprunteur = get_object_or_404(Emprunteur, id=emprunteur_id)
+    media = get_object_or_404(Media, id=media_id)
 
     try:
-        emprunteur.emprunter_media(media)
-        return redirect('media_list')
+        if media.emprunteur:
+            raise ValueError("Ce média est déjà emprunté.")
+        
+        if emprunteur.media_set.count() >= 3:
+            raise ValueError("Vous ne pouvez pas emprunter plus de 3 médias.")
+
+        media.emprunteur = emprunteur
+        media.save()
+
+        return redirect('media_list') 
+    
     except ValueError as e:
         return render(request, 'bibliothecaire/emprunteur_error.html', {'error_message': str(e)})
+    
+def rendre_media(request, emprunteur_id, media_id):
+    emprunteur = get_object_or_404(Emprunteur, id=emprunteur_id)
+    media = get_object_or_404(Media, id=media_id)
+
+    if media.emprunteur == emprunteur:
+        media.disponible = True
+        media.emprunteur = None
+        media.date_emprunt = None
+        media.save()
+
+        return redirect('media_list')
+    else:
+        return redirect('media_list')
+
+    
+def jeu_plateau_list(request):
+    jeux = JeuDePlateau.objects.all()
+    return render(request, 'bibliothecaire/jeu_plateau_list.html', {'jeux': jeux})
+
+def ajout_plateau(request):
+    if request.method == 'POST':
+        form = JeuDePlateauForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('jeu_plateau_list')
+    
+    else:
+        form = JeuDePlateauForm()
+
+    return render(request, 'bibliothecaire/ajout_plateau.html', {'form': form})

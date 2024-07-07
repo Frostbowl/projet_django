@@ -1,5 +1,5 @@
 from django import forms
-from .models import Media, Livre, Cd, Dvd, Emprunteur
+from .models import Media, Livre, Cd, Dvd, Emprunteur, JeuDePlateau
 
 class MediaTypeForm(forms.Form):
     media_type = forms.ChoiceField(choices=[
@@ -11,7 +11,7 @@ class MediaTypeForm(forms.Form):
 class MediaForm(forms.ModelForm):
     class Meta:
         model = Media
-        fields = ['name', 'disponible', 'date_emprunt', 'emprunteur']
+        fields = ['name']
         
 class LivreForm(MediaForm):
     class Meta(MediaForm.Meta):
@@ -41,3 +41,8 @@ class EmprunteurForm(forms.ModelForm):
             raise forms.ValidationError('Cet emprunteur a déjà 3 emprunts en cours.')
         
         return cleaned_data
+    
+class JeuDePlateauForm(forms.ModelForm):
+    class Meta:
+        model = JeuDePlateau
+        fields = ['nom', 'fabricant', 'description']
