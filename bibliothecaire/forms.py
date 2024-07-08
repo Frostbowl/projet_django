@@ -31,14 +31,15 @@ class DvdForm(MediaForm):
 class EmprunteurForm(forms.ModelForm):
     class Meta:
         model = Emprunteur
-        fields = ['nom', 'prenom', 'bloque']
+        fields = ['nom', 'prenom']
 
     def clean(self):
         cleaned_data = super().clean()
         emprunteur = self.instance
         
-        if emprunteur and not emprunteur.peut_emprunter():
-            raise forms.ValidationError('Cet emprunteur a déjà 3 emprunts en cours.')
+        if emprunteur.pk:
+            if not emprunteur.peut_emprunter():
+                raise forms.ValidationError('Cet emprunteur a déjà 3 emprunts en cours.')
         
         return cleaned_data
     

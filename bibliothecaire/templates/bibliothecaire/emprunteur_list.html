@@ -7,7 +7,9 @@
     <h1>Liste des emprunteurs</h1>
     <ul>
         {% for emprunteur in emprunteurs %}
-        <li>{{ emprunteur.nom }} {{ emprunteur.prenom }}{% if emprunteur.bloque %} (Bloqué){% endif %}</li>
+        <br><li>{{ emprunteur.nom }} {{ emprunteur.prenom }}{% if emprunteur.bloque %} (Bloqué){% endif %}</li>
+        <a href="{% url 'maj_emprunteur' emprunteur.id %}">Modifier membre</a><br>
+        <a href="{%url 'delete_emprunteur' emprunteur.id %}">Supprimer membre</a> <br>
         {% endfor %}
     </ul>
     <a href="{% url 'create_emprunteur' %}">Créer un nouvel emprunteur</a> <br>
