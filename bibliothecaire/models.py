@@ -19,6 +19,7 @@ class Emprunteur(models.Model):
         if self.peut_emprunter():
             media.disponible = False
             media.emprunteur = self
+            media.date_emprunt = datetime.date.today()
             media.save()
         else:
             raise ValueError("Cet emprunteur a déjà 3 emprunts en cours.")
@@ -38,11 +39,11 @@ class Media(models.Model):
 
     def emprunter(self, emprunteur):
         if not self.emprunteur:
-            if emprunteur.media_set_count() < 3:
+            if emprunteur.peut_emprunter():
                 self.emprunteur = emprunteur
                 self.disponible = False
                 self.date_emprunt = datetime.date.today()
-                self.save
+                self.save()
             else:
                 raise ValueError('Vous ne pouvez pas emprunter plus de 3 médias')
 
